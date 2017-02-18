@@ -8,6 +8,8 @@ Script(s) for the data rescue -boulder event
 ## Disclaimer
 - These scripts have only been tested on a mac, and the use of virtualenv and pip ***should*** result in the same behavior on Windows/Linux systems - but it's possible you might need to tweak the code. Very open to suggestions and/or Pull Requests!
 
+- for Linux distributions with coexistant python2 and python3, use python2 version.
+
 ### Set things up
 
 - In your terminal/iterm (mac/unix) or Command Line/Git Shell (Windows):
