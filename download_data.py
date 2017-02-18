@@ -26,7 +26,7 @@ def handle_download(url, local_path, filename, max_size):
         print "Exception: " + str(e)
         skip_list = skip_list + [url]
         print "Added to skip list"
-        return
+        return 0
 
     # just a catch all to make sure the script doesn't exit for a case
     # I haven't thought of. That would be annoying with so many files!
@@ -50,6 +50,7 @@ def handle_download(url, local_path, filename, max_size):
         print "Unexpected error trying to download url:" + str(url)
         print "Adding it to the skip list"
         skip_list = skip_list + [url]
+        return 0
 
 
 def get_data_list(filename):
@@ -62,14 +63,13 @@ def get_data_list(filename):
 
 def download_all_files(data_links_filename,
                        downloads_path,
-                       max_size,
-                       max_downloaded_files=5):
+                       max_size):
     # get all the download links
     data_list = get_data_list(data_links_filename)
-    counter = 0
     current_size = 0
 
-    for data_path in data_list:
+    while(len(data_list) > 0):
+        data_path = data_list.pop(0)
         full_url_no_options = data_path.rsplit('?')[0]
         url_without_domain = full_url_no_options.replace("http://", "")
         url_without_domain = url_without_domain.replace("https://", "")
@@ -79,7 +79,7 @@ def download_all_files(data_links_filename,
         filename = path_and_filename[1]
         full_data_dir = os.path.join(downloads_path, *data_dir.split('/'))
         if (os.path.exists(full_data_dir)):
-            print full_data_dir + "already exists"
+            print full_data_dir + " already exists"
         else:
             print "Creating dir: " + full_data_dir
             os.makedirs(full_data_dir)
@@ -92,9 +92,9 @@ def download_all_files(data_links_filename,
                                                       filename, max_size)
         if (current_size >= max_size):
             break
-        counter = counter + 1
-        if (counter == max_downloaded_files):
-            break
+    global skip_list
+    # Add all the urls not downloaded for whatever reason to the skip list
+    skip_list = skip_list + data_list
 
 
 def create_downloads_folder(folder_name="downloads"):
@@ -115,9 +115,9 @@ if __name__ == '__main__':
                         required=True,
                         help='The name of the file containing links' +
                              '(one per line).Only direct download links!!')
-    parser.add_argument('--max_space', metavar='M', type=int,
-                        default=default_max_size,
-                        help='The maximum space you have available. Default: ' +
+    parser.add_argument('--max_space', metavar='M', type=float,
+                        default=max_in_gb,
+                        help='The maximum space you have available (In GB). Default: ' +
                         str(max_in_gb) + 'GB')
     parser.add_argument('--downloads_folder', metavar='D', type=str,
                         default='downloads',
@@ -125,9 +125,12 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    max_size_in_bytes = args.max_space * 1000000000
+
     create_downloads_folder(folder_name=args.downloads_folder)
     download_all_files(data_links_filename=args.filename,
                        downloads_path=args.downloads_folder,
-                       max_size=args.max_space,
-                       max_downloaded_files=5)
-    # download_all_files(data_links_filename="edg_epa_file_list.txt")
+                       max_size=max_size_in_bytes)
+    with open("skipped_files.txt", "a") as skip_file:
+        for data_path in skip_list:
+            skip_file.write("%s\n" % data_path)

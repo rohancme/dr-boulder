@@ -86,11 +86,20 @@ for data_path in data_list:
 with open("edg_epa_file_list.txt", "w") as data_file:
     for data_path in output_data_list:
         data_file.write("%s\n" % data_path)
+    base_path = os.path.dirname(os.path.realpath(__file__))
+    file_path = '/'.join(base_path, "edg_epa_file_list.txt")
+    print "Data files stored in " + str(file_path)
 
 with open("edg_epa_ftp_file_list.txt", "w") as ftp_file:
     for data_path in ftp_list:
         ftp_file.write("%s\n" % data_path)
+    base_path = os.path.dirname(os.path.realpath(__file__))
+    file_path = '/'.join(base_path, "edg_epa_ftp_file_list.txt")
+    print "Data files stored in " + str(file_path)
 
 with open("edg_epa_skipped_file_list.txt", "w") as skip_file:
     for data_path in skip_list:
         skip_file.write("%s\n" % data_path)
+    base_path = os.path.dirname(os.path.realpath(__file__))
+    file_path = '/'.join(base_path, "edg_epa_skipped_file_list.txt")
+    print "Data files stored in " + str(file_path)
