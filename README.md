@@ -9,5 +9,8 @@ Script(s) for the data rescue -boulder event
 virtualenv env
 source env/bin/activate
 pip install -r requirements.txt
-python find_download_edg_epa.py <maximum number of files you want to download>
+# generate file list
+python edg_epa_data_public/find_data_edg_epa.py
+# download the files. Before the event - default max files downloaded is 5
+python download_data_edg_epa.py --filename=edg_epa_data_public/edg_epa_file_list.txt
 ```
